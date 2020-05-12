@@ -1,9 +1,7 @@
 var crypt = new Crypt();
 var rsa = new RSA();
 
-
 rsa.generateKeyPair(function(keyPair) {
-    // Callback function receives new key pair as a first argument
     publicKey = keyPair.publicKey;
     privateKey = keyPair.privateKey;
 });
@@ -28,7 +26,6 @@ function sessionAnthony(){
 }
 
 function sessionSacha(){
-    let pair =
     sessionStorage.setItem("user", "Sacha");
     let user =  {
         name: "Sacha",

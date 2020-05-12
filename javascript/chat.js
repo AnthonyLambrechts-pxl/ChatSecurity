@@ -30,7 +30,8 @@ function postEncryptedMessage() {
     let url = 'http://localhost:3000/messages';
     let inputField = document.getElementById("message");
     let text = inputField.value;
-    let encrypted = crypt.encrypt([anthonyPubKey, sachaPubKey], text);
+    let signature = crypt.signature(userPrivKey, text);
+    let encrypted = crypt.encrypt([anthonyPubKey, sachaPubKey], text, signature);
 
     let jsonObject = {
         sender: sender,
@@ -109,10 +110,24 @@ function InsertMessages(messageList) {
         let forSender = messageList[i].sender;
         if (forSender === "Anthony") {
             let decryptedMessage = crypt.decrypt(userPrivKey, messageList[i].message);
-            insertChat(forSender, decryptedMessage.message, messageList[i].dateField);
+            var verified = crypt.verify(
+                anthonyPubKey,
+                decryptedMessage.signature,
+                decryptedMessage.message,
+            );
+            if (verified) {
+                insertChat(forSender, decryptedMessage.message, messageList[i].dateField);
+            }
         } else {
             let decryptedMessage = crypt.decrypt(userPrivKey, messageList[i].message);
-            insertChat(forSender, decryptedMessage.message, messageList[i].dateField);
+            var verified = crypt.verify(
+                sachaPubKey,
+                decryptedMessage.signature,
+                decryptedMessage.message,
+            );
+            if (verified) {
+                insertChat(forSender, decryptedMessage.message, messageList[i].dateField);
+            }
         }
     }
 }
